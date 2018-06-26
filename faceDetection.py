@@ -29,3 +29,9 @@ if os.path.exists('{}.meta'.format(MODEL_NAME)):
     model.load(MODEL_NAME)
     print('model loaded!')
 
+@app.route('/FaceDetection/<url>', methods = ['GET'])        
+def Action(url):
+    return json.dumps({""})
+
+if __name__ == '__main__':
+    app.run(host='127.0.0.1', port=8000)
