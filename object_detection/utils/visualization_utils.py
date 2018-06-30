@@ -44,9 +44,8 @@ FLANN_INDEX_KDITREE=0
 flannParam=dict(algorithm=FLANN_INDEX_KDITREE,tree=5)
 flann=cv2.FlannBasedMatcher(flannParam,{})
 API_URL = 'http://127.0.0.1:8080/Action/'
+API_URLFace = 'http://127.0.0.1:9000/FaceDetection/'
 urlStore = '172.27.170.30:11111*'
-BestAPI_url = ''
-MODEL_NAME = 'classifyPeople-{}-{}.model'.format(LR, '2conv-basic')
 
 _TITLE_LEFT_MARGIN = 10
 _TITLE_TOP_MARGIN = 10
@@ -485,38 +484,51 @@ def visualize_boxes_and_labels_on_image_array(image,
                   data_action = response.json()
                   print(data_action)
                   countdown(3)
-                
-                  PathDir = urlStore+name[i]+'/'
+                 
+                  PathDir = "StoreImage/"+name[i]+'/'
+                  path_list = list()
                   for root, dirs, files in os.walk(PathDir):
                     for file in files:
                       path_list.append( os.path.join(root,file))
-
-
+                      #print("teststestsetestsetsetet")
                       detector=cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
                       path_list.sort()
                       listNodetectFace = []
                       listDetectFace = []
+                      # print(path_list)
                       
-                      
-                      for path in path_list:
-                        img = cv2.imread(path)
-                        gary = cv2.imread(path , cv2.IMREAD_GRAYSCALE)
-                        faces = detector.detectMultiScale(gary, 1.3,5)
-                        if faces == () :
-                          listNodetectFace.append(path)
-                        else :
-                          listDetectFace.append(path)
-
-                      nameMan = ""
-                      maxAccuracy = 0
-                      if(listDetectFace.__len__ > 10):
-
-                        for i in listDetectFace:
-                          gary = cv2.imread(i , cv2.IMREAD_GRAYSCALE)
-                          faces = detector.detectMultiScale(gary, 1.3,5)
-                          for (x,y,w,h) in faces:
-                            
+                    for path in path_list:
+                      img = cv2.imread(path)
+                      gary = cv2.imread(path , cv2.IMREAD_GRAYSCALE)
+                      faces = detector.detectMultiScale(gary, 1.3,5)
+                      if faces == () :
+                        listNodetectFace.append(path)
                       else :
+                        listDetectFace.append(path)
+
+
+                      
+                    nameMan = ""
+                    maxAccuracy = 0
+                    
+                    if(len(listDetectFace) > 10):
+                      try:
+                        if not os.path.exists("StoreFaceimage/"+name[i]):
+                          os.makedirs("StoreFaceimage/"+name[i])
+                      except OSError:
+                        print ('Error: Creating directory. ' + directory)
+                      countt = 0
+                      for imageFace in listDetectFace:
+                        gary = cv2.imread(imageFace , cv2.IMREAD_GRAYSCALE)
+                        faces = detector.detectMultiScale(gary, 1.3,5)
+                        for (x,y,w,h) in faces:
+                          cv2.imwrite("StoreFaceimage/"+name[i]+"/"+str(countt)+".png",gary[y:y+h,x:x+w])
+                          url = API_URLFace+"StoreFaceimage/"+name[i]+"/"+str(countt)+".png"
+                          response = requests.get(url)
+                          data_name = response.json()
+                          print(data_name)
+                        countt = countt + 1
+                    else : pass
                   count[i] = 0
           else:
             class_name = 'N/A'
