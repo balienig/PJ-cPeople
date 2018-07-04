@@ -27,8 +27,6 @@ class Life2Coding(QDialog):
             self.face_Enabled = False
 
 
-
-
     def start_webcam(self):
         self.capture = cv2.VideoCapture(0)
         self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT,480)
@@ -40,15 +38,15 @@ class Life2Coding(QDialog):
     
     def update_frame(self):
         ret,self.image = self.capture.read()
-        print(type(self.image))
         self.image = cv2.flip(self.image,1)
-        self.displayImage(self.image,1)
 
         if self.face_Enabled :
             detected_image = self.displayImage(self.image,1)
             self.displayImage(detected_image,1)
         else :
             self.displayImage(self.image,1)
+
+
 
     def detect_face(self,img):
         gray = cv2.cvtColor(img ,cv2.COLOR_BAYER_BG2GRAY)
@@ -60,6 +58,11 @@ class Life2Coding(QDialog):
 
     def displayImage(self,img,window = 1):
         qformat = QImage.Format_Indexed8
+        print(img)
+        print(type(img))
+        print(img.shape)
+        # if img != None:
+            
         if len(img.shape) == 3 :
             if img.shape[2] == 4:
                 qformat = QImage.Format_RGBA8888

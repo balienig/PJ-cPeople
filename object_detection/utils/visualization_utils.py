@@ -406,7 +406,7 @@ def visualize_boxes_and_labels_on_image_array(image,
   global  samplebox
   global  count
   global  setpath
-  global  count 
+  global  countt 
   global  name
   box_to_display_str_map = collections.defaultdict(list)
   box_to_color_map = collections.defaultdict(str)
@@ -490,7 +490,6 @@ def visualize_boxes_and_labels_on_image_array(image,
                   for root, dirs, files in os.walk(PathDir):
                     for file in files:
                       path_list.append( os.path.join(root,file))
-                      #print("teststestsetestsetsetet")
                       detector=cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
                       path_list.sort()
                       listNodetectFace = []
@@ -510,8 +509,8 @@ def visualize_boxes_and_labels_on_image_array(image,
                       
                     nameMan = ""
                     maxAccuracy = 0
-                    
-                    if(len(listDetectFace) > 10):
+
+                    if(len(listDetectFace) > 1):
                       try:
                         if not os.path.exists("StoreFaceimage/"+name[i]):
                           os.makedirs("StoreFaceimage/"+name[i])
@@ -522,10 +521,11 @@ def visualize_boxes_and_labels_on_image_array(image,
                         gary = cv2.imread(imageFace , cv2.IMREAD_GRAYSCALE)
                         faces = detector.detectMultiScale(gary, 1.3,5)
                         for (x,y,w,h) in faces:
+                          print(gary[y:y+h,x:x+w].shape)
                           cv2.imwrite("StoreFaceimage/"+name[i]+"/"+str(countt)+".png",gary[y:y+h,x:x+w])
-                          url = API_URLFace+"StoreFaceimage/"+name[i]+"/"+str(countt)+".png"
-                          response = requests.get(url)
-                          data_name = response.json()
+                          url = API_URLFace+"StoreFaceimage*"+name[i]+"*"+str(countt)+".png"
+                          response2 = requests.get(url)
+                          data_name = response2.json()
                           print(data_name)
                         countt = countt + 1
                     else : pass
