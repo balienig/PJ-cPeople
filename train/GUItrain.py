@@ -87,6 +87,8 @@ class Life2Coding(QDialog):
                     os.makedirs("train/StoreFace/"+self.NameFloder)
             except OSError:
                 print ('Error: Creating directory. ')
+        else :
+            print("error")
         
 
     def checkName(self):

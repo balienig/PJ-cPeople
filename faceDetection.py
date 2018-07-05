@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 from random import shuffle
 
-
+pathFloderStore = 'train/StoreFace/'
 
 app = Flask(__name__)
 
@@ -71,6 +71,13 @@ def statusName(str):
 
 
 def checkName(str):
+
+    for folder , dirs, files in os.walk(pathFloderStore):
+    # print(folder)
+        nameFolder = folder.split('/')
+        if nameFolder[2] != "" :
+            listName.append(nameFolder[2])
+
     status = 'True'
     for i in listName:
         if(i == str):
