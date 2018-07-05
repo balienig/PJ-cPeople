@@ -38,17 +38,39 @@ if os.path.exists('{}.meta'.format(MODEL_NAME)):
 def predit(str):
     url = str.split('*')
     path = url[0]+"/"+url[1]+"/"+url[2]
+    print(path)
     img = cv2.imread(path)
-    img = cv2.imread(img, cv2.IMREAD_GRAYSCALE)
     img = cv2.resize(img,(50,50))
-
-    predict = model.predict(img)
-    return str(predict)
+    img = np.array(img).reshape(-1,50,50,1)/255
+    model_out = model.predict(img)
+    print(model_out)
+    str_label = ""
+    # value = model_out[np.argmax(model_out)]
+    if np.argmax(model_out) == 0: str_label = 'big'
+    elif np.argmax(model_out) == 1: str_label = 'o'
+    elif np.argmax(model_out) == 2 : str_label = 'team'
+    return str_label
 
 @app.route('/FaceDetection/<str>', methods = ['GET'])        
 def FaceDetection(str):
     A = predit(str)
-    return json.dumps({"str": A})
+    return json.dumps({"name": A})
+
+listName = []
+
+@app.route('/statusName/<str>', methods = ['GET'])
+def statusName(str):
+    status = checkName(str)
+    return json.dumps({"status":status})
+
+
+def checkName(str):
+    status = 'True'
+    for i in listName:
+        if(i == str):
+            return 'False'
+    return 'True'
+
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=9000)
