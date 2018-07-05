@@ -11,14 +11,16 @@ import numpy as np
 from random import shuffle
 
 pathFloderStore = 'train/StoreFace/'
+LR = 1e-3
+
+MODEL_NAME = 'classifyPeople2-{}-{}.model'.format(LR, '2conv-basic')
 
 app = Flask(__name__)
 
-IMAGE_SIZE = 50
+ImageSize = 50
 LR = 1e-3
-MODEL_NAME = 'classifyPeople-{}-{}.model'.format(LR, '2conv-basic')
 
-convnet = input_data(shape=[None, IMAGE_SIZE, IMAGE_SIZE, 1], name='input')
+convnet = input_data(shape=[None, ImageSize, ImageSize, 1], name='input')
 
 convnet = conv_2d(convnet, 32, 5, activation='relu')
 convnet = max_pool_2d(convnet, 2)
@@ -26,18 +28,18 @@ convnet = max_pool_2d(convnet, 2)
 convnet = conv_2d(convnet, 64, 5, activation='relu')
 convnet = max_pool_2d(convnet, 2)
 
-convnet = fully_connected(convnet, 30, activation='relu')
+convnet = fully_connected(convnet, numClass*10, activation='relu')
 convnet = dropout(convnet, 0.8)
 
-convnet = fully_connected(convnet, 3, 
+convnet = fully_connected(convnet, numClass, 
                           activation='softmax')
 convnet = regression(convnet, optimizer='adam', learning_rate=LR, loss='categorical_crossentropy', name='targets')
 
 model = tflearn.DNN(convnet, tensorboard_dir='log')
 
-if os.path.exists('{}.meta'.format(MODEL_NAME)):
-    model.load(MODEL_NAME)
-    print('model loaded!')
+# if os.path.exists('{}.meta'.format(MODEL_NAME)):
+#     model.load(MODEL_NAME)
+#     print('model loaded!')
 
 def predit(str):
     url = str.split('*')
@@ -83,6 +85,33 @@ def checkName(str):
         if(i == str):
             return 'False'
     return 'True'
+
+def trainning(self):
+    for folder , dirs, files in os.walk(pathFloderStore):
+    # print(folder)
+    nameFolder = folder.split('/')
+    if nameFolder[2] != "" :
+        listName.append(nameFolder[2])
+    
+    listLabel = []
+    numClass = len(listName)
+    for i in range(numClass):
+        listLabel.append([0]*numClass)
+        listLabel[i][i] = 1
+
+    training_data = []
+    for folder , dirs, files in os.walk(pathFloderStore):
+        for file in files:
+            path = os.path.join(folder,file)
+            word_label = path.split('/')
+            index = listName.index(word_label[2])
+            # print(listLabel[index])
+            img = cv2.imread(path,cv2.IMREAD_GRAYSCALE)
+            img = cv2.resize(img,(ImageSize,ImageSize))
+            training_data.append([np.array(img),np.array(listLabel[index])])
+    shuffle(training_data)
+    # print(training_data)
+    # print(listName)
 
 
 if __name__ == '__main__':
