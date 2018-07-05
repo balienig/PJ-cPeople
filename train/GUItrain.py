@@ -9,6 +9,7 @@ import os
 url = 'http://127.0.0.1:9000/'
 pathCheckName = 'statusName/'
 numFacePic = 100
+pathFloderStore = 'train/StoreFace/'
 class Life2Coding(QDialog):
     def __init__(self):
         super(Life2Coding,self).__init__()
@@ -98,9 +99,6 @@ class Life2Coding(QDialog):
         if(self.status == 'True'):
             self.NameFloder = myText
 
-        
-        # print(status['status'])
-    
     def train(self):
         print("train")
 

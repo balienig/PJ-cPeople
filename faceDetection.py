@@ -8,6 +8,10 @@ from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.estimator import regression
 import cv2
 import numpy as np
+from random import shuffle
+
+
+
 app = Flask(__name__)
 
 IMAGE_SIZE = 50
@@ -62,6 +66,8 @@ listName = []
 def statusName(str):
     status = checkName(str)
     return json.dumps({"status":status})
+
+
 
 
 def checkName(str):
