@@ -76,7 +76,7 @@ Y = [i[1] for i in train]
 test_x = np.array([i[0] for i in test]).reshape(-1,ImageSize,ImageSize,1)/255
 test_y = [i[1] for i in test]
 
-model.fit({'input': X}, {'targets': Y}, n_epoch=5000, validation_set=({'input': test_x}, {'targets': test_y}), 
+model.fit({'input': X}, {'targets': Y}, n_epoch=400, validation_set=({'input': test_x}, {'targets': test_y}), 
     snapshot_step=100, show_metric=True, run_id=MODEL_NAME)
 
 model.save(MODEL_NAME)
