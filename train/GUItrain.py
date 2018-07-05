@@ -18,6 +18,7 @@ class Life2Coding(QDialog):
         self.start_webcam()
         self.checkNameButton.clicked.connect(self.checkName)
         self.captureButton.clicked.connect(self.capturePic)
+        self.trainButton.clicked.connect(self.train)
         self.statusCapture = False
         self.countPic = 0
         self.status = 'false'
@@ -100,6 +101,8 @@ class Life2Coding(QDialog):
         
         # print(status['status'])
     
+    def train(self):
+        print("train")
 
 
 if __name__=='__main__':
