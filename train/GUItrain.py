@@ -14,7 +14,6 @@ from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.estimator import regression
 
 url = 'http://127.0.0.1:9000/'
-pathCheckName = 'statusName/'
 numFacePic = 100
 pathFloderStore = 'train/StoreFace/'
 pathTrainning = 'trainningStatus/'
@@ -101,10 +100,18 @@ class Life2Coding(QDialog):
 
     def checkName(self):
         myText = self.textName.toPlainText()
-        urlCheckName = url+pathCheckName + myText
-        response = requests.get(urlCheckName)
-        self.status = response.json()
-        self.status = self.status['status']
+        listName = []
+        for folder , dirs, files in os.walk(pathFloderStore):
+            nameFolder = folder.split('/')
+            if nameFolder[2] != "" :
+                listName.append(nameFolder[2])
+        count = 0
+        for i in listName:
+            if(i == myText):
+                count = 1
+                self.status = 'False'
+        if count == 0:
+            self.status = 'True'
         print(self.status)
         if(self.status == 'True'):
             self.NameFloder = myText
@@ -115,7 +122,7 @@ class Life2Coding(QDialog):
         pathFloderStore = 'train/StoreFace/'
         LR = 1e-3
 
-        MODEL_NAME = 'classifyPeople2-{}-{}.model'.format(LR, '2conv-basic')
+        MODEL_NAME = 'classifyPeople-{}-{}.model'.format(LR, '2conv-basic')
 
         listName = []
         ImageSize = 50
@@ -183,7 +190,7 @@ class Life2Coding(QDialog):
         batch_size= numClass*10,snapshot_step=100, show_metric=True, run_id=MODEL_NAME)
 
         model.save(MODEL_NAME)
-        self.percentTrain.setText('trainning Success')
+        self.percentTrain.setText('Success')
 
 
 if __name__=='__main__':
