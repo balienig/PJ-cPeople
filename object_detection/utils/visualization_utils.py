@@ -519,15 +519,16 @@ def visualize_boxes_and_labels_on_image_array(image,
                       countt = 0
                       for imageFace in listDetectFace:
                         gary = cv2.imread(imageFace , cv2.IMREAD_GRAYSCALE)
-                        faces = detector.detectMultiScale(gary, 1.3,5)
+                        faces = detector.detectMultiScale(gary, 1.2,5)
                         for (x,y,w,h) in faces:
                           # print(gary[y:y+h,x:x+w].shape)
-                          cv2.imwrite("StoreFaceimage/"+name[i]+"/"+str(countt)+".png",gary[y:y+h,x:x+w])
-                          url = API_URLFace+"StoreFaceimage*"+name[i]+"*"+str(countt)+".png"
-                          response2 = requests.get(url)
-                          data_name = response2.json()
-                          print(data_name)
-                        countt = countt + 1
+                          if(x+w > 150 and y+h > 150):
+                            cv2.imwrite("StoreFaceimage/"+name[i]+"/"+str(countt)+".png",gary[y:y+h,x:x+w])
+                            url = API_URLFace+"StoreFaceimage*"+name[i]+"*"+str(countt)+".png"
+                            response2 = requests.get(url)
+                            data_name = response2.json()
+                            print(data_name)
+                            countt = countt + 1
                     else : pass
                   count[i] = 0
           else:
