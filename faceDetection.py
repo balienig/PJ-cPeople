@@ -12,13 +12,17 @@ LR = 1e-3
 MODEL_NAME = 'classifyPeople-{}-{}.model'.format(LR, '2conv-basic')
 
 app = Flask(__name__)
-
 listName = []
+for folder , dirs, files in os.walk(pathFloderStore):
+    nameFolder = folder.split('/')
+    if nameFolder[2] != "" :
+        listName.append(nameFolder[2])
+
+
 numClass = len(listName)
 
 
 ImageSize = 50
-LR = 1e-3
 
 import tflearn
 from tflearn.layers.conv import conv_2d, max_pool_2d
@@ -45,33 +49,32 @@ convnet = regression(convnet, optimizer='adam', learning_rate=LR, loss='categori
 
 model = tflearn.DNN(convnet, tensorboard_dir='log')
 
+
+
 if os.path.exists('{}.meta'.format(MODEL_NAME)):
     model.load(MODEL_NAME)
     print('model loaded!')
 
 def predit(str):
-    for folder , dirs, files in os.walk(pathFloderStore):
-        nameFolder = folder.split('/')
-    if nameFolder[2] != "" :
-        listName.append(nameFolder[2])
-
     url = str.split('*')
     path = url[0]+"/"+url[1]+"/"+url[2]
-    print(path)
+    # print(path)
     img = cv2.imread(path)
     img = cv2.resize(img,(50,50))
     img = np.array(img).reshape(-1,50,50,1)/255
     model_out = model.predict(img)
-    print(model_out)
+    # print(model_out.shape)
     str_label = ""
     # value = model_out[np.argmax(model_out)]
-    index = np.argmax(model_out)
-    return listName[index]
+    index = np.argmax(model_out[0])
+    # print(index)
+    return listName[index],model_out[0][index]
 
-@app.route('/FaceDetection/<str>', methods = ['GET'])        
-def FaceDetection(str):
-    A = predit(str)
-    return json.dumps({"name": A})
+@app.route('/FaceDetection/<url>', methods = ['GET'])        
+def FaceDetection(url):
+    name,accuracy = predit(url)
+    accuracy = str(accuracy)
+    return json.dumps({"name": name,"AccuracyName":accuracy})
 
 
 

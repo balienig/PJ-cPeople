@@ -521,7 +521,7 @@ def visualize_boxes_and_labels_on_image_array(image,
                         gary = cv2.imread(imageFace , cv2.IMREAD_GRAYSCALE)
                         faces = detector.detectMultiScale(gary, 1.3,5)
                         for (x,y,w,h) in faces:
-                          print(gary[y:y+h,x:x+w].shape)
+                          # print(gary[y:y+h,x:x+w].shape)
                           cv2.imwrite("StoreFaceimage/"+name[i]+"/"+str(countt)+".png",gary[y:y+h,x:x+w])
                           url = API_URLFace+"StoreFaceimage*"+name[i]+"*"+str(countt)+".png"
                           response2 = requests.get(url)
