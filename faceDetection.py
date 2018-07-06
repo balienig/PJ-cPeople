@@ -37,11 +37,11 @@ convnet = input_data(shape=[None, ImageSize, ImageSize, 1], name='input')
 convnet = conv_2d(convnet, 32, 5, activation='relu')
 convnet = max_pool_2d(convnet, 2)
 
-convnet = conv_2d(convnet, 64, 5, activation='relu')
+convnet = conv_2d(convnet, 32, 5, activation='relu')
 convnet = max_pool_2d(convnet, 2)
 
 convnet = fully_connected(convnet, numClass*10, activation='relu')
-convnet = dropout(convnet, 0.8)
+convnet = dropout(convnet, 0.5)
 
 convnet = fully_connected(convnet, numClass, 
                           activation='softmax')
@@ -63,7 +63,7 @@ def predit(str):
     img = cv2.resize(img,(50,50))
     img = np.array(img).reshape(-1,50,50,1)/255
     model_out = model.predict(img)
-    # print(model_out.shape)
+    print(model_out)
     str_label = ""
     # value = model_out[np.argmax(model_out)]
     index = np.argmax(model_out[0])

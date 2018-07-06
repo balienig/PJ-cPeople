@@ -8,7 +8,7 @@ from random import shuffle
 
 pathFloderStore = 'train/StoreFace/'
 LR = 1e-3
-
+pathA = 'StoreFaceimage/ujf8hYGG/'
 MODEL_NAME = 'classifyPeople-{}-{}.model'.format(LR, '2conv-basic')
 
 app = Flask(__name__)
@@ -34,14 +34,14 @@ from tflearn.layers.estimator import regression
 
 convnet = input_data(shape=[None, ImageSize, ImageSize, 1], name='input')
 
-convnet = conv_2d(convnet, 32, 5, activation='relu')
+convnet = conv_2d(convnet, numClass*3, 2, activation='relu')
 convnet = max_pool_2d(convnet, 2)
 
-convnet = conv_2d(convnet, 64, 5, activation='relu')
+convnet = conv_2d(convnet, numClass*2, 2, activation='relu')
 convnet = max_pool_2d(convnet, 2)
 
-convnet = fully_connected(convnet, numClass*10, activation='relu')
-convnet = dropout(convnet, 0.8)
+convnet = fully_connected(convnet, numClass, activation='relu')
+convnet = dropout(convnet, 0.5)
 
 convnet = fully_connected(convnet, numClass, 
                           activation='softmax')
@@ -52,9 +52,14 @@ model = tflearn.DNN(convnet, tensorboard_dir='log')
 if os.path.exists('{}.meta'.format(MODEL_NAME)):
     model.load(MODEL_NAME)
     print('model loaded!')
-
-img = cv2.imread('StoreFaceimage/KRc48xOv/0.png')
-img = cv2.resize(img,(50,50))
-img = np.array(img).reshape(-1,50,50,1)/255
-model_out = model.predict(img)
-print(numClass)
+# print('AAA')
+for folder , dirs, files in os.walk(pathA):
+    for file in files:
+        path = os.path.join(folder,file)
+        img = cv2.imread(path)
+        img = cv2.resize(img,(50,50))
+        img = np.array(img).reshape(-1,50,50,1)/255
+        model_out = model.predict(img)
+        index = np.argmax(model_out[0])
+        print(listName[index],model_out[0][index])
+    

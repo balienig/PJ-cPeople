@@ -159,14 +159,14 @@ class Life2Coding(QDialog):
 
         convnet = input_data(shape=[None, ImageSize, ImageSize, 1], name='input')
 
-        convnet = conv_2d(convnet, 32, 5, activation='relu')
+        convnet = conv_2d(convnet, numClass*3, 2, activation='relu')
         convnet = max_pool_2d(convnet, 2)
 
-        convnet = conv_2d(convnet, 64, 5, activation='relu')
+        convnet = conv_2d(convnet, numClass*2, 2, activation='relu')
         convnet = max_pool_2d(convnet, 2)
 
-        convnet = fully_connected(convnet, numClass*10, activation='relu')
-        convnet = dropout(convnet, 0.8)
+        convnet = fully_connected(convnet, numClass, activation='relu')
+        convnet = dropout(convnet, 0.5)
 
         convnet = fully_connected(convnet, numClass, 
                           activation='softmax')
