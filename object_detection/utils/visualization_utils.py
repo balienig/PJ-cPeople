@@ -510,7 +510,7 @@ def visualize_boxes_and_labels_on_image_array(image,
                     nameMan = ""
                     maxAccuracy = 0
 
-                    if(len(listDetectFace) > 1):
+                    if(len(listDetectFace) > 10):
                       try:
                         if not os.path.exists("StoreFaceimage/"+name[i]):
                           os.makedirs("StoreFaceimage/"+name[i])

@@ -34,13 +34,13 @@ from tflearn.layers.estimator import regression
 
 convnet = input_data(shape=[None, ImageSize, ImageSize, 1], name='input')
 
-convnet = conv_2d(convnet, numClass*3, 2, activation='relu')
+convnet = conv_2d(convnet, 6, 2, activation='relu')
 convnet = max_pool_2d(convnet, 2)
 
-convnet = conv_2d(convnet, numClass*2, 2, activation='relu')
+convnet = conv_2d(convnet, 16, 2, activation='relu')
 convnet = max_pool_2d(convnet, 2)
 
-convnet = fully_connected(convnet, numClass, activation='relu')
+convnet = fully_connected(convnet, 32, activation='relu')
 convnet = dropout(convnet, 0.5)
 
 convnet = fully_connected(convnet, numClass, 

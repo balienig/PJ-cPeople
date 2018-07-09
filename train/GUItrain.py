@@ -148,25 +148,27 @@ class Life2Coding(QDialog):
                 index = listName.index(word_label[2])
                 # print(listLabel[index])
                 img = cv2.imread(path,cv2.IMREAD_GRAYSCALE)
+                # print(img)
                 img = cv2.resize(img,(ImageSize,ImageSize))
+                # print(np.shape(img))
                 training_data.append([np.array(img),np.array(listLabel[index])])
         shuffle(training_data)
+        # print(training_data)
 
 
 
 # import tensorflow as tf
 # tf.reset_default_graph()
-
+        
         convnet = input_data(shape=[None, ImageSize, ImageSize, 1], name='input')
+        convnet = conv_2d(convnet, 32, (5,5), activation='relu',padding= 'valid')
+        convnet = max_pool_2d(convnet, 2,padding= 'valid')
 
-        convnet = conv_2d(convnet, numClass*3, 2, activation='relu')
-        convnet = max_pool_2d(convnet, 2)
+        convnet = conv_2d(convnet, 32, (5,5), activation='relu',padding= 'valid')
+        convnet = max_pool_2d(convnet, 2,padding= 'valid')
 
-        convnet = conv_2d(convnet, numClass*2, 2, activation='relu')
-        convnet = max_pool_2d(convnet, 2)
-
-        convnet = fully_connected(convnet, numClass, activation='relu')
-        convnet = dropout(convnet, 0.5)
+        convnet = fully_connected(convnet,30, activation= 'relu')
+        convnet = dropout(convnet, 0.6)
 
         convnet = fully_connected(convnet, numClass, 
                           activation='softmax')
@@ -180,13 +182,18 @@ class Life2Coding(QDialog):
         train = training_data[:-num_test]
         test = training_data[-num_test:]
 
+        print(np.shape(train[0][0]))
+        
         X = np.array([i[0] for i in train]).reshape(-1,ImageSize,ImageSize,1)/255
-        Y = [i[1] for i in train]
 
+        print(np.shape(X[0]))
+        Y = [i[1] for i in train]
         test_x = np.array([i[0] for i in test]).reshape(-1,ImageSize,ImageSize,1)/255
         test_y = [i[1] for i in test]
 
-        model.fit({'input': X}, {'targets': Y}, n_epoch=100, validation_set=({'input': test_x}, {'targets': test_y}), 
+        # print(np.shape(X))
+
+        model.fit({'input': X}, {'targets': Y}, n_epoch=200, validation_set=({'input': test_x}, {'targets': test_y}), 
         batch_size= numClass*10,snapshot_step=100, show_metric=True, run_id=MODEL_NAME)
 
         model.save(MODEL_NAME)
