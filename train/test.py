@@ -12,16 +12,28 @@ path = 'StoreFaceimage/WDeZJwki'
 MODEL_NAME = 'classifyPeople-{}-{}.model'.format(LR, '2conv-basic')
 
 convnet = input_data(shape=[None, 50, 50, 1], name='input')
-convnet = conv_2d(convnet, 32, (5,5), activation='relu',padding= 'valid')
+convnet = conv_2d(convnet, 16, (5,5), activation='relu',padding= 'valid')
 convnet = max_pool_2d(convnet, 2,padding= 'valid')
 
-convnet = conv_2d(convnet, 32, (5,5), activation='relu',padding= 'valid')
-convnet = max_pool_2d(convnet, 2,padding= 'valid')
+convnet = conv_2d(convnet, 16, (5,5), activation='relu',padding= 'valid')
+convnet = max_pool_2d(convnet, 2,padding= 'valid',strides=2)
 
-convnet = fully_connected(convnet,30, activation= 'relu')
-convnet = dropout(convnet, 0.5)
+# convnet = fully_connected(convnet,30, activation= 'relu')
+# convnet = dropout(convnet, 0.5)
 
-
+#2X2 3X3 5X5 7X7
+#16 32 64 
+#strides = 1 , 2 , 3 
+#โหวต เอาไว้หลังสุด หลังจาก หาพารามิตเตอร์ หาค่าดีที่สุด แล้วก็ทำแบบโหวตกับไม่โหวต
+#ทำ 5 คลาส แล้วก็ 10 คลาส
+#Leru ลองตัดอันแรกๆ ออก 
+#ตอนเทสไม่ต้องใส่ 
+#dropout ลองใส่ 0
+#Asual
+#เพิ่ม convolu 3 ชั้น
+#max 3 strides 3
+#ส่วนมาก dropout ใส่ก่อน fully
+#1000 รอบอย่างเดียว
 convnet = fully_connected(convnet, 10, 
                           activation='softmax')
 convnet = regression(convnet, optimizer='adam', learning_rate=LR, loss='categorical_crossentropy', name='targets')
