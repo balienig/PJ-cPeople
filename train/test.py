@@ -12,13 +12,13 @@ path = 'StoreFaceimage/WDeZJwki'
 MODEL_NAME = 'classifyPeople-{}-{}.model'.format(LR, '2conv-basic')
 
 convnet = input_data(shape=[None, 50, 50, 1], name='input')
-convnet = conv_2d(convnet, 16, (5,5), activation='relu',padding= 'valid')
-convnet = max_pool_2d(convnet, 2,padding= 'valid')
+convnet = conv_2d(convnet, 64, 2, activation='relu',padding= 'same')
+convnet = max_pool_2d(convnet, 2,padding= 'same')
 
-convnet = conv_2d(convnet, 16, (5,5), activation='relu',padding= 'valid')
-convnet = max_pool_2d(convnet, 2,padding= 'valid',strides=2)
+convnet = conv_2d(convnet, 64, 2, activation='relu',padding= 'same')
+convnet = max_pool_2d(convnet, 2,padding= 'same',strides=2)
 
-# convnet = fully_connected(convnet,30, activation= 'relu')
+convnet = fully_connected(convnet,64, activation= 'relu')
 # convnet = dropout(convnet, 0.5)
 
 #2X2 3X3 5X5 7X7
@@ -55,8 +55,8 @@ for folder , dirs, files in os.walk(path):
         img = cv2.imread(os.path.join(folder,file))
         img = cv2.resize(img,(IMAGE_SIZE,IMAGE_SIZE))
         img = np.array(img).reshape(-1,IMAGE_SIZE,IMAGE_SIZE,1)/255
-        model_out = model.predict(img)
-        index = np.argmax(model_out[0])
+        model_out = model.predict(img)[1]
+        index = np.argmax(model_out)
         print(index)
-        print(listName[index],model_out[0][index])
+        print(listName[index],model_out[index])
 

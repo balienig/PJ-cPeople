@@ -161,13 +161,14 @@ class Life2Coding(QDialog):
 # tf.reset_default_graph()
         
         convnet = input_data(shape=[None, ImageSize, ImageSize, 1], name='input')
-        convnet = conv_2d(convnet, 16, (5,5),padding= 'valid')
-        convnet = max_pool_2d(convnet, 2,padding= 'valid')
+        convnet = conv_2d(convnet, 64, 2,padding= 'same')
+        convnet = max_pool_2d(convnet, 2,padding= 'same')
 
-        convnet = conv_2d(convnet, 16, (5,5), activation='relu',padding= 'valid')
-        convnet = max_pool_2d(convnet, 2,padding= 'valid' ,strides = 2 )
+        convnet = conv_2d(convnet, 64, 2, activation='relu',padding= 'same')
+        convnet = max_pool_2d(convnet, 2,padding= 'same' ,strides = 2 )
 
-        # convnet = dropout(convnet, 0)
+        convnet = fully_connected(convnet,64, activation= 'relu')
+        convnet = dropout(convnet, 0.5)
         convnet = fully_connected(convnet, numClass, 
                           activation='softmax')
         convnet = regression(convnet, optimizer='adam', learning_rate=LR, loss='categorical_crossentropy', name='targets')
