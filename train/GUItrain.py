@@ -39,11 +39,12 @@ class Life2Coding(QDialog):
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_frame)
-        self.timer.start(5)
+        self.timer.start()
     
     def update_frame(self):
         ret,self.image = self.capture.read()
         self.image = cv2.flip(self.image,1)
+        # print(type(self.image))
         self.image = self.detect_face(self.image)
         self.displayImage(self.image,1)
 
@@ -168,6 +169,7 @@ class Life2Coding(QDialog):
         convnet = max_pool_2d(convnet, 2,padding= 'same' ,strides = 2 )
 
         convnet = fully_connected(convnet,64, activation= 'relu')
+
         convnet = dropout(convnet, 0.5)
         convnet = fully_connected(convnet, numClass, 
                           activation='softmax')
@@ -192,7 +194,7 @@ class Life2Coding(QDialog):
 
         # print(np.shape(X))
 
-        model.fit({'input': X}, {'targets': Y}, n_epoch=1000, validation_set=({'input': test_x}, {'targets': test_y}), 
+        model.fit({'input': X}, {'targets': Y}, n_epoch=1, validation_set=({'input': test_x}, {'targets': test_y}), 
         batch_size= numClass*10,snapshot_step=100, show_metric=True, run_id=MODEL_NAME)
 
         model.save(MODEL_NAME)

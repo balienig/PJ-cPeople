@@ -525,9 +525,9 @@ def visualize_boxes_and_labels_on_image_array(image,
                           if(x+w > 150 and y+h > 150):
                             cv2.imwrite("StoreFaceimage/"+name[i]+"/"+str(countt)+".png",gary[y:y+h,x:x+w])
                             url = API_URLFace+"StoreFaceimage*"+name[i]+"*"+str(countt)+".png"
-                            response2 = requests.get(url)
-                            data_name = response2.json()
-                            print(data_name)
+                            # response2 = requests.get(url)
+                            # data_name = response2.json()
+                            # print(data_name)
                             countt = countt + 1
                     else : pass
                   count[i] = 0
