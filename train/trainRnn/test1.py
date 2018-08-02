@@ -88,12 +88,12 @@ def rnn(x, weight, bias):
     prediction = tf.matmul(outputs[-1], weight) + bias
     return prediction
 n_input = 15
-training_iters = 100000
+training_iters = 1000
 n_hidden = 512
 learning_rate = 0.001
 acc_total = 0
 loss_total = 0
-display_step = 1000
+display_step = 100
 
 x = tf.placeholder("float", [None, n_input, 2250])
 y = tf.placeholder("float", [None, numClass*15*len(Label)])
@@ -130,6 +130,12 @@ with tf.Session() as session:
 
         loss_total += loss
         acc_total += acc
+
+		# print(type(i))
+		# print(type(display_step))
+		#if(i % display_step == 0):
+			#print("accuracy: ",acc,"loss: ",loss,"predict: ",onehot_pred)
+		
         
         
     
