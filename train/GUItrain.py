@@ -162,7 +162,7 @@ class Life2Coding(QDialog):
 # tf.reset_default_graph()
         
         convnet = input_data(shape=[None, ImageSize, ImageSize, 1], name='input')
-        convnet = conv_2d(convnet, 64, 2,padding= 'same')
+        convnet = conv_2d(convnet, 32, 2,padding= 'same')
         convnet = max_pool_2d(convnet, 2,padding= 'same')
 
         convnet = conv_2d(convnet, 64, 2, activation='relu',padding= 'same')

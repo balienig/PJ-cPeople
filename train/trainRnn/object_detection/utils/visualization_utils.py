@@ -31,7 +31,7 @@ import PIL.ImageDraw as ImageDraw
 import PIL.ImageFont as ImageFont
 import six
 import tensorflow as tf
-
+import cv2
 from object_detection.core import standard_fields as fields
 
 
@@ -537,7 +537,7 @@ def draw_mask_on_image_array(image, mask, color='red', alpha=0.4):
   pil_image = Image.composite(pil_solid_color, pil_image, pil_mask)
   np.copyto(image, np.array(pil_image.convert('RGB')))
 
-
+count = 0
 def visualize_boxes_and_labels_on_image_array(
     image,
     boxes,
@@ -597,6 +597,8 @@ def visualize_boxes_and_labels_on_image_array(
   """
   # Create a display string (and color) for every box location, group any boxes
   # that correspond to the same location.
+  global  count
+  im_height,im_width, _ = image.shape
   box_to_display_str_map = collections.defaultdict(list)
   box_to_color_map = collections.defaultdict(str)
   box_to_instance_masks_map = {}
@@ -607,6 +609,7 @@ def visualize_boxes_and_labels_on_image_array(
   for i in range(min(max_boxes_to_draw, boxes.shape[0])):
     if scores is None or scores[i] > min_score_thresh:
       box = tuple(boxes[i].tolist())
+      ymin, xmin, ymax, xmax = box
       if instance_masks is not None:
         box_to_instance_masks_map[box] = instance_masks[i]
       if instance_boundaries is not None:
@@ -621,6 +624,9 @@ def visualize_boxes_and_labels_on_image_array(
           if not agnostic_mode:
             if classes[i] in category_index.keys():
               class_name = category_index[classes[i]]['name']
+              if(class_name == "person"):
+                count = count+1
+                cv2.imwrite("/home/balienig/Documents/Git/PJ-cPeople/train/trainRnn/image/"+str(count)+".png",image[int(ymin*im_height):int((ymax)*im_height),int(xmin*im_width):int((xmax)*im_width)])
             else:
               class_name = 'N/A'
             display_str = str(class_name)

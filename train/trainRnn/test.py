@@ -5,7 +5,7 @@ import six.moves.urllib as urllib
 import sys
 import tarfile
 import tensorflow as tf
-
+from scipy import ndimage
 import cv2
 
 from collections import defaultdict
@@ -41,12 +41,13 @@ label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
 categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
 category_index = label_map_util.create_category_index(categories)       
 # print(category_index[1])
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('/home/balienig/Documents/Git/PJ-cPeople/train/trainRnn/vid/20180425_203640.mp4')
 # print(label_map[0])
 with detection_graph.as_default():
   with tf.Session(graph=detection_graph) as sess:
     while True:
       ret, image_np = cap.read()
+      image_np = ndimage.rotate(image_np, 270)
       # image_np = cv2.cvtColor(image_np,cv2.COLOR_RGB2GRAY)
       image_np_expanded = np.expand_dims(image_np, axis=0)
       image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
