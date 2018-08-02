@@ -40,7 +40,7 @@ for folder , dirs, files in os.walk(pathFloderStore):
 		img = cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
 		img = cv2.resize(img,(Im_Height,Im_Width))
 		# print(img.shape)
-		training_data.append([np.array(img),np.array(listLabel[index])])
+		training_data.append([np.array(img),listLabel[index]])
         # shuffle(training_data)
 
 # print(training_data[0][1])
@@ -61,75 +61,79 @@ for i in range(1,len(training_data),15):
 
 shuffle(listDataSet)
 
-# Image = [i for i in listDataSet[0]]
-# Label = [i for i in listDataSet[1]]
+
 frame = []
 Label = []
 for i in listDataSet:
-	frame.append(i[0])	
-	Label.append(i[1])
+	listFrame = []
+	listLabel = []
+	for j in i:
+		listFrame.append(j[0])
+		listLabel.append(j[1])
+	frame.append(listFrame)
+	Label.append(listLabel)
+# print(frame[0])
+print(len(Label))
+def rnn(x, weight, bias):
+    '''
+     define rnn cell and prediction
+    '''
 
-print(frame[0])
-# def rnn(x, weight, bias):
-#     '''
-#      define rnn cell and prediction
-#     '''
-
-#     x = tf.reshape(x, [-1, n_input * 128])
-#     x = tf.split(x, n_input, 1)
+    x = tf.reshape(x, [-1, n_input])
+    x = tf.split(x, n_input, 1)
     
 
-#     cell = tf.contrib.rnn.BasicLSTMCell(n_hidden, forget_bias=1.0)
-#     outputs, states = tf.contrib.rnn.static_rnn(cell, x, dtype=tf.float32)
-#     prediction = tf.matmul(outputs[-1], weight) + bias
-#     return prediction
-# n_input = 15
-# training_iters = 100000
-# n_hidden = 512
-# learning_rate = 0.001
-# acc_total = 0
-# loss_total = 0
-# display_step = 1000
+    cell = tf.contrib.rnn.BasicLSTMCell(n_hidden, forget_bias=1.0)
+    outputs, states = tf.contrib.rnn.static_rnn(cell, x, dtype=tf.float32)
+    prediction = tf.matmul(outputs[-1], weight) + bias
+    return prediction
+n_input = 15
+training_iters = 100000
+n_hidden = 512
+learning_rate = 0.001
+acc_total = 0
+loss_total = 0
+display_step = 1000
 
-# x = tf.placeholder("float", [None, n_input, 2250])
-# y = tf.placeholder("float", [None, numClass])
+x = tf.placeholder("float", [None, n_input, 2250])
+y = tf.placeholder("float", [None, numClass*15*len(Label)])
 
-# weight = tf.Variable(tf.random_normal([n_hidden, numClass]))
-# bias = tf.Variable(tf.random_normal([numClass]))
+weight = tf.Variable(tf.random_normal([n_hidden, numClass]))
+bias = tf.Variable(tf.random_normal([numClass]))
 
-# logits = rnn(x, weight, bias)
-# prediction = tf.nn.softmax(logits)
-# softmax = tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=y)
-# cost = tf.reduce_mean(softmax)
-# optimizer = tf.train.RMSPropOptimizer(learning_rate=learning_rate).minimize(cost)
+logits = rnn(x, weight, bias)
+prediction = tf.nn.softmax(logits)
+softmax = tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=y)
+cost = tf.reduce_mean(softmax)
+optimizer = tf.train.RMSPropOptimizer(learning_rate=learning_rate).minimize(cost)
     
-# correct_pred = tf.equal(tf.argmax(logits, 1), tf.argmax(y, 1))
-# accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+correct_pred = tf.equal(tf.argmax(logits, 1), tf.argmax(y, 1))
+accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
 
-# init_op = tf.global_variables_initializer()
-# saver = tf.train.Saver()
+init_op = tf.global_variables_initializer()
+saver = tf.train.Saver()
 
 
-# allresult = []
-# with tf.Session() as session:
+allresult = []
+with tf.Session() as session:
     
-#     session.run(init_op)
+    session.run(init_op)
 
-#     #writer.add_graph(session.graph)
+    #writer.add_graph(session.graph)
     
-#     for i in range(0,len(listDataSet)):
+    for i in range(0,len(frame)):
         
-#         input_data = np.reshape(listDataSet[i][0], [-1, n_input, 2250])
-#         output_data = np.reshape(listDataSet[i][1], [1,-1])
+        input_data = np.reshape(frame, [-1, n_input, 2250])
+        output_data = np.reshape(Label, [1,-1])
 
-#         _, acc, loss, onehot_pred = session.run([optimizer, accuracy, cost, prediction] ,feed_dict={x:input_data, y:output_data})
-        
-#         loss_total += loss
-#         acc_total += acc
+        _, acc, loss, onehot_pred = session.run([optimizer, accuracy, cost, prediction] ,feed_dict={x:input_data, y:output_data})
+
+        loss_total += loss
+        acc_total += acc
         
         
     
-#     save_path = saver.save(session, "./save_lstm1/model.ckpt")
-#     print("Model saved in file: %s" % save_path)
-#     print("Optimization Finished!")
-#     print("Elapsed time: ", elapsed(time.time() - start_time))
+    save_path = saver.save(session, "./save_lstm1/model.ckpt")
+    print("Model saved in file: %s" % save_path)
+    print("Optimization Finished!")
+    print("Elapsed time: ", elapsed(time.time() - start_time))
