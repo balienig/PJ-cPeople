@@ -143,3 +143,4 @@ with tf.Session() as session:
     print("Model saved in file: %s" % save_path)
     print("Optimization Finished!")
     print("Elapsed time: ", elapsed(time.time() - start_time))
+	
